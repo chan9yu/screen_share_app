@@ -1,4 +1,5 @@
 import { MainService } from './services/MainService';
+import './styles/index.css';
 
 const mainService = new MainService();
 
