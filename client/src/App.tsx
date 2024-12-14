@@ -1,7 +1,10 @@
-import { MainService } from './services/MainService';
-
-const mainService = new MainService();
+import GlobalStyles from './styles/GlobalStyles';
 
 export default function App() {
-	return <div>Screen Share App.</div>;
+	return (
+		<>
+			<GlobalStyles />
+			Screen Share App.
+		</>
+	);
 }
