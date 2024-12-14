@@ -1,8 +1,6 @@
-import { MainService } from './services/MainService';
+import JoinContainer from './components/join/JoinContainer';
 import './styles/index.css';
 
-const mainService = new MainService();
-
 export default function App() {
-	return <div>Screen Share App.</div>;
+	return <JoinContainer />;
 }
