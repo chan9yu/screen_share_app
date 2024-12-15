@@ -1,20 +1,42 @@
 import { useTheme } from '@emotion/react';
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 
+import { roomApi } from '../../apis';
 import { Icon } from '../common';
 import * as S from './JoinContainer.styles';
 
 export default function JoinContainer() {
 	const { colors } = useTheme();
 
-	const [accessCode, setAccessCode] = useState<string | null>(null);
+	const [roomId, setRoomId] = useState<string | null>(null);
 
-	const handleCreateAccessCode = () => {
-		if (accessCode) {
-			setAccessCode(null);
+	const handleCreateAccessCode = async () => {
+		if (roomId) {
+			try {
+				await roomApi.closeRoom(roomId);
+				setRoomId(null);
+			} catch (error) {
+				console.error(error);
+			}
 		} else {
-			const newCode = Math.floor(100000 + Math.random() * 900000).toString();
-			setAccessCode(newCode);
+			try {
+				const { roomId } = await roomApi.createRoom();
+				setRoomId(roomId);
+			} catch (error) {
+				console.error(error);
+			}
+		}
+	};
+
+	const handleCopyToRoomId = async () => {
+		if (!roomId) return;
+
+		try {
+			await navigator.clipboard.writeText(roomId);
+			toast.success('클립보드에 복사하였습니다.');
+		} catch (error) {
+			console.error('Failed to copy text:', error);
 		}
 	};
 
@@ -29,17 +51,17 @@ export default function JoinContainer() {
 				</S.CardHeader>
 				<S.CardDescription>다른 사용자가 원격으로 내 컴퓨터를 제어할 수 있도록 코드를 생성합니다</S.CardDescription>
 				<S.CaedContents>
-					{accessCode && (
+					{roomId && (
 						<S.AccessCode>
-							{accessCode.slice(0, 3)}&nbsp;{accessCode.slice(3)}
-							<S.IconBox>
+							{roomId.slice(0, 3)}&nbsp;{roomId.slice(3)}
+							<S.IconBox onClick={handleCopyToRoomId}>
 								<Icon name="clipboard" width={18} stroke={colors.gray[800]} />
 							</S.IconBox>
 						</S.AccessCode>
 					)}
 				</S.CaedContents>
 				<S.Button color="blue" onClick={handleCreateAccessCode}>
-					{accessCode ? '취소' : '코드 생성'}
+					{roomId ? '취소' : '코드 생성'}
 				</S.Button>
 			</S.Card>
 			<S.Card>
