@@ -90,6 +90,11 @@ export const Input = styled.input`
 	border: 1px solid ${({ theme }) => theme.colors.gray[100]};
 	font: ${({ theme }) => theme.typography.R200};
 
+	&:disabled {
+		cursor: not-allowed;
+		background-color: ${({ theme }) => theme.colors.gray[50]};
+	}
+
 	&[type='number']::-webkit-inner-spin-button {
 		appearance: none;
 	}
@@ -112,11 +117,16 @@ export const Button = styled.button<{ color: 'red' | 'blue' }>`
 	color: ${({ theme }) => theme.colors.white};
 	font: ${({ theme }) => theme.typography.B200};
 
-	&:hover {
+	&:disabled {
+		cursor: not-allowed;
+		background-color: ${({ color, theme }) => theme.colors[color][100]};
+	}
+
+	&:hover:not(&:disabled) {
 		background-color: ${({ color, theme }) => theme.colors[color][600]};
 	}
 
-	&:active {
+	&:active:not(&:disabled) {
 		background-color: ${({ color, theme }) => theme.colors[color][700]};
 	}
 `;

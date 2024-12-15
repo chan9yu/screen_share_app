@@ -1,20 +1,8 @@
-import { ThemeProvider } from '@emotion/react';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-
-import { JoinContainer } from './components';
-import { MainServiceProvider } from './contexts';
-import { GlobalStyles, theme } from './styles';
+import { JoinContainer, RoomContainer } from './components';
+import { useMainService } from './contexts';
 
 export default function App() {
-	return (
-		<MainServiceProvider>
-			<ThemeProvider theme={theme}>
-				<GlobalStyles />
-				<ToastContainer position="top-center" autoClose={1500} hideProgressBar />
-				{/* service views */}
-				<JoinContainer />
-			</ThemeProvider>
-		</MainServiceProvider>
-	);
+	const { joined } = useMainService();
+
+	return joined ? <RoomContainer /> : <JoinContainer />;
 }

@@ -1,16 +1,20 @@
+import EventEmitter from 'eventemitter3';
 import { SocketManager } from './__private__';
 
-export class MainService {
+export class MainService extends EventEmitter<'state'> {
 	private socketManager: SocketManager | null = null;
 
 	constructor() {
+		super();
 		this.connectToWebSocket();
 	}
 
 	private initWebSocketEvents() {
 		if (!this.socketManager) return;
 
-		// ... event init
+		this.socketManager.on('welcome', () => {
+			this.emit('state', { joined: true });
+		});
 	}
 
 	private connectToWebSocket() {

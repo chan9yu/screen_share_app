@@ -9,7 +9,7 @@ import * as S from './JoinContainer.styles';
 
 export default function JoinContainer() {
 	const { colors } = useTheme();
-	const { mainService } = useMainService();
+	const { mainService, setJoined } = useMainService();
 
 	const [createdRoomId, setCreatedRoomId] = useState('');
 	const [joinRoomId, setJoinRoomId] = useState('');
@@ -63,6 +63,7 @@ export default function JoinContainer() {
 
 		if (success) {
 			mainService.sendJoin(joinRoomId);
+			setJoined(true);
 		} else {
 			toast.error('방이 존재하지 않습니다.');
 		}
@@ -106,11 +107,12 @@ export default function JoinContainer() {
 						maxLength={6}
 						minLength={6}
 						placeholder="입장할 방의 ID를 입력하세요"
+						disabled={!!createdRoomId}
 						value={joinRoomId}
 						onChange={handleChangeJoinRoomId}
 					/>
 				</S.CaedContents>
-				<S.Button color="red" onClick={handleConnectRoom}>
+				<S.Button color="red" disabled={!!createdRoomId} onClick={handleConnectRoom}>
 					연결
 				</S.Button>
 			</S.Card>

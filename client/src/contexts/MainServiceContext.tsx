@@ -1,8 +1,19 @@
-import { PropsWithChildren, createContext, useContext, useEffect, useMemo } from 'react';
+import {
+	Dispatch,
+	PropsWithChildren,
+	SetStateAction,
+	createContext,
+	useContext,
+	useEffect,
+	useMemo,
+	useState
+} from 'react';
 import { MainService } from '../services/MainService';
 
 type MainServiceContextProps = {
 	mainService: MainService;
+	joined: boolean;
+	setJoined: Dispatch<SetStateAction<boolean>>;
 };
 
 const MainServiceContext = createContext<MainServiceContextProps | undefined>(undefined);
@@ -18,7 +29,17 @@ export const useMainService = () => {
 };
 
 export function MainServiceProvider({ children }: PropsWithChildren) {
-	const value = useMemo(() => ({ mainService }), []);
+	const [joined, setJoined] = useState(false);
+
+	useEffect(() => {
+		mainService.on('state', data => {
+			if (data?.joined) {
+				setJoined(true);
+			}
+		});
+	}, []);
+
+	const value = useMemo(() => ({ mainService, joined, setJoined }), [joined]);
 
 	return <MainServiceContext.Provider value={value}>{children}</MainServiceContext.Provider>;
 }
