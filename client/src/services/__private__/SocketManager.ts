@@ -65,43 +65,36 @@ export class SocketManager extends EventEmitter<EventTypes> {
 
 		this.socket.on('connect', () => {
 			this.emit('connect');
-			console.log('Connected to WebSocket server');
 		});
 
 		this.socket.on('disconnect', () => {
 			this.emit('disconnect');
-			console.log('Disconnected from WebSocket server');
+		});
+
+		this.socket.on('leave', () => {
+			this.emit('leave');
 		});
 
 		this.socket.on('welcome', data => {
 			this.sendWelcome({ roomId: data.roomId, userId: data.userId });
 			this.emit('welcome', data);
-			console.log('Welcome message received from server', data);
 		});
 
 		this.socket.on('offer', data => {
 			this.emit('offer', data);
-			console.log('Offer received:', data);
 		});
 
 		this.socket.on('answer', data => {
 			this.emit('answer', data);
-			console.log('Answer received:', data);
 		});
 
 		this.socket.on('ice', data => {
 			this.emit('ice', data);
-			console.log('ICE candidate received:', data);
 		});
 	}
 
 	private sendMessage(event: string, data: object) {
-		if (!this.socket) {
-			console.error('Socket is not connected.');
-			return;
-		}
-
+		if (!this.socket) return;
 		this.socket.emit(event, data);
-		console.log(`Message sent to event '${event}':`, data);
 	}
 }

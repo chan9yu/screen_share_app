@@ -61,12 +61,15 @@ export default function JoinContainer() {
 			return;
 		}
 
-		const { success } = await roomApi.validateRoom(joinRoomId);
-
-		if (success) {
-			mainService.sendJoin(joinRoomId);
-		} else {
-			toast.error('방이 존재하지 않습니다.');
+		try {
+			const { success } = await roomApi.validateRoom(joinRoomId);
+			if (success) {
+				mainService.sendJoin(joinRoomId);
+			} else {
+				toast.error('방이 존재하지 않습니다.');
+			}
+		} catch (error) {
+			alert(error);
 		}
 	};
 

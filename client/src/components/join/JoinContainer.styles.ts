@@ -7,6 +7,11 @@ export const Container = styled.div`
 	justify-content: center;
 	align-items: center;
 	gap: 24px;
+	padding: 24px;
+
+	@media screen and (max-width: 900px) {
+		flex-direction: column;
+	}
 `;
 
 export const Card = styled.div`
@@ -18,6 +23,12 @@ export const Card = styled.div`
 	background-color: ${({ theme }) => theme.colors.white};
 	box-shadow: 0px 2px 2px 0px ${({ theme }) => theme.colors.gray_opacity[10]};
 	border-radius: 8px;
+
+	@media screen and (max-width: 900px) {
+		width: 100%;
+		padding: 24px;
+		gap: 10px;
+	}
 `;
 
 export const CardHeader = styled.div`

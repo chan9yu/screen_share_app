@@ -6,15 +6,18 @@ import {
 	useContext,
 	useEffect,
 	useMemo,
+	useRef,
 	useState
 } from 'react';
 import { MainService } from '../services/MainService';
+import { toast } from 'react-toastify';
 
 type MainServiceContextProps = {
 	mainService: MainService;
 	isHost: boolean;
 	setIsHost: Dispatch<SetStateAction<boolean>>;
 	joined: boolean;
+	setJoined: Dispatch<SetStateAction<boolean>>;
 	remoteStream?: MediaStream;
 };
 
@@ -35,15 +38,26 @@ export function MainServiceProvider({ children }: PropsWithChildren) {
 	const [joined, setJoined] = useState(false);
 	const [remoteStream, setRemoteStream] = useState<MediaStream>();
 
-	useEffect(() => {
-		mainService.connectToSocket();
-		mainService.on('state', data => {
-			setJoined(data?.joined);
-		});
+	// local 환경에서 한 번만 실행할 수 있도록 임시 설정
+	const hasExecuted = useRef(false);
 
-		mainService.on('media', data => {
-			setRemoteStream(data?.remoteStream);
-		});
+	useEffect(() => {
+		if (!hasExecuted.current) {
+			mainService.connectToSocket();
+			mainService.on('state', data => {
+				setJoined(data?.joined);
+
+				if (!data?.joined) {
+					toast.error('연결이 종료되어 대기 페이지로 이동합니다.');
+				}
+			});
+
+			mainService.on('media', data => {
+				setRemoteStream(data?.remoteStream);
+			});
+
+			hasExecuted.current = true;
+		}
 	}, []);
 
 	const value = useMemo(
@@ -52,6 +66,7 @@ export function MainServiceProvider({ children }: PropsWithChildren) {
 			isHost,
 			setIsHost,
 			joined,
+			setJoined,
 			remoteStream
 		}),
 		[isHost, joined, remoteStream]

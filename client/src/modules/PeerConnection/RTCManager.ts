@@ -21,7 +21,7 @@ export class RTCManager extends EventEmitter<'ice' | 'remote_stream'> {
 		if (!this.peer) return;
 
 		this.peer.onconnectionstatechange = event => {
-			console.log('on connection state change', event);
+			console.log('@@@@ on connection state change', event);
 		};
 
 		this.peer.onsignalingstatechange = event => {

@@ -41,12 +41,10 @@ export class MainService extends EventEmitter<'state' | 'media'> {
 
 		this.socketManager.on('leave', () => {
 			this.emit('state', { joined: false });
-			this.close();
 		});
 
 		this.socketManager.on('disconnect', () => {
 			this.emit('state', { joined: false });
-			this.close();
 		});
 
 		this.socketManager.on('offer', async (data: RTCSessionDescriptionInit) => {
@@ -64,7 +62,7 @@ export class MainService extends EventEmitter<'state' | 'media'> {
 	}
 
 	public connectToSocket() {
-		const url = 'ws://localhost:3036';
+		const url = `ws://${window.location.hostname}:3036`;
 		this.socketManager = new SocketManager(url);
 		this.socketManager.connect();
 		this.initWebSocketEvents();

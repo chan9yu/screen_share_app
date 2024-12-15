@@ -26,6 +26,7 @@ export default function useScreenShare() {
 			setSharing(true);
 		} catch (error) {
 			console.error('Error accessing display media:', error);
+			alert(error);
 		}
 	};
 
