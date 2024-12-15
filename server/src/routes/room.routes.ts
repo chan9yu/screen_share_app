@@ -5,5 +5,5 @@ const roomController = new RoomController();
 
 export const roomRouter = Router();
 
-roomRouter.get('/create', roomController.createRoom);
-roomRouter.post('/close', roomController.closeRoom);
+roomRouter.post('/create', roomController.createRoom.bind(roomController));
+roomRouter.post('/close', roomController.closeRoom.bind(roomController));
