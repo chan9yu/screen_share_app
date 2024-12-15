@@ -40,7 +40,7 @@ export const createSocketServer = (server: http.Server) => {
 		});
 
 		socket.on('disconnect', () => {
-			console.log('user disconnected');
+			console.log(`User ${userId} disconnected`);
 		});
 	});
 };

@@ -32,10 +32,9 @@ export function MainServiceProvider({ children }: PropsWithChildren) {
 	const [joined, setJoined] = useState(false);
 
 	useEffect(() => {
+		mainService.connectToSocket();
 		mainService.on('state', data => {
-			if (data?.joined) {
-				setJoined(true);
-			}
+			setJoined(data?.joined);
 		});
 	}, []);
 

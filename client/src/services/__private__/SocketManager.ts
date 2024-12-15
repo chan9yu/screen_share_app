@@ -1,7 +1,7 @@
 import { EventEmitter } from 'eventemitter3';
 import { io, Socket } from 'socket.io-client';
 
-type EventTypes = 'connect' | 'disconnect' | 'welcome' | 'offer' | 'answer' | 'ice';
+type EventTypes = 'connect' | 'disconnect' | 'welcome' | 'leave' | 'offer' | 'answer' | 'ice';
 
 export class SocketManager extends EventEmitter<EventTypes> {
 	private socket: Socket | null = null;
