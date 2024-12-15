@@ -1,12 +1,12 @@
-import http from 'http';
+import http from 'node:http';
 
 import { app } from './app';
-import { initializeWebSocket } from './websocket';
+import { createSocketServer } from './websocket/socket-io';
 
 const PORT = process.env.PORT || 3036;
 const server = http.createServer(app);
 
-initializeWebSocket(server);
+createSocketServer(server);
 
 server.listen(PORT, () => {
 	console.log(`✅ Server is running on http://localhost:${PORT}`);
