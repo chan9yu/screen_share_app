@@ -1,7 +1,7 @@
 import { css, Global, Theme, useTheme } from '@emotion/react';
 import emotionReset from 'emotion-reset';
 
-import PretendardVariable from '../assets/font/PretendardVariable.woff2';
+import PretendardVariable from '../assets/fonts/PretendardVariable.woff2';
 
 const createGlobalStyles = (theme: Theme) => css`
 	${emotionReset}
