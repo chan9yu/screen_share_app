@@ -36,23 +36,23 @@ export class SocketManager extends EventEmitter<EventTypes> {
 		console.log('🔌 Socket connection closed.');
 	}
 
-	public sendJoin(data: { accessCode: string }) {
+	public sendJoin(data: { roomId: string }) {
 		this.sendMessage('join', data);
 	}
 
-	public sendLeave(data: { accessCode: string }) {
+	public sendLeave(data: { roomId: string }) {
 		this.sendMessage('leave', data);
 	}
 
-	public sendOffer(data: { accessCode: string; sdp: any }) {
+	public sendOffer(data: { roomId: string; sdp: any }) {
 		this.sendMessage('offer', data);
 	}
 
-	public sendAnswer(data: { accessCode: string; sdp: any }) {
+	public sendAnswer(data: { roomId: string; sdp: any }) {
 		this.sendMessage('answer', data);
 	}
 
-	public sendIce(data: { accessCode: string; ice: RTCIceCandidate }) {
+	public sendIce(data: { roomId: string; ice: RTCIceCandidate }) {
 		this.sendMessage('ice', data);
 	}
 

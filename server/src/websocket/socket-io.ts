@@ -13,30 +13,30 @@ export const createSocketServer = (server: http.Server) => {
 		const userId = socket.id;
 
 		socket.on('join', data => {
-			const { accessCode } = data;
-			socket.join(accessCode);
-			socket.to(accessCode).emit('welcome', { userId, accessCode });
+			const { roomId } = data;
+			socket.join(roomId);
+			socket.to(roomId).emit('welcome', { userId, roomId });
 		});
 
 		socket.on('leave', data => {
-			const { accessCode } = data;
-			socket.leave(accessCode);
-			socket.to(accessCode).emit('leave', { userId, accessCode });
+			const { roomId } = data;
+			socket.leave(roomId);
+			socket.to(roomId).emit('leave', { userId, roomId });
 		});
 
 		socket.on('offer', data => {
-			const { accessCode, sdp } = data;
-			socket.to(accessCode).emit('offer', sdp);
+			const { roomId, sdp } = data;
+			socket.to(roomId).emit('offer', sdp);
 		});
 
 		socket.on('answer', data => {
-			const { accessCode, sdp } = data;
-			socket.to(accessCode).emit('answer', sdp);
+			const { roomId, sdp } = data;
+			socket.to(roomId).emit('answer', sdp);
 		});
 
 		socket.on('ice', data => {
-			const { accessCode, ice } = data;
-			socket.to(accessCode).emit('ice', ice);
+			const { roomId, ice } = data;
+			socket.to(roomId).emit('ice', ice);
 		});
 
 		socket.on('disconnect', () => {

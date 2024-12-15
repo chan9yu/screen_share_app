@@ -11,7 +11,7 @@ export default function App() {
 		<MainServiceProvider>
 			<ThemeProvider theme={theme}>
 				<GlobalStyles />
-				<ToastContainer position="top-center" autoClose={2000} hideProgressBar />
+				<ToastContainer position="top-center" autoClose={1500} hideProgressBar />
 				{/* service views */}
 				<JoinContainer />
 			</ThemeProvider>

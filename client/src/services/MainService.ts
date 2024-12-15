@@ -20,24 +20,24 @@ export class MainService {
 		this.initWebSocketEvents();
 	}
 
-	public sendJoin(accessCode: string) {
-		this.socketManager?.sendJoin({ accessCode });
+	public sendJoin(roomId: string) {
+		this.socketManager?.sendJoin({ roomId });
 	}
 
-	public sendLeave(accessCode: string) {
-		this.socketManager?.sendLeave({ accessCode });
+	public sendLeave(roomId: string) {
+		this.socketManager?.sendLeave({ roomId });
 	}
 
-	public sendOffer(accessCode: string, sdp: any) {
-		this.socketManager?.sendOffer({ accessCode, sdp });
+	public sendOffer(roomId: string, sdp: any) {
+		this.socketManager?.sendOffer({ roomId, sdp });
 	}
 
-	public sendAnswer(accessCode: string, sdp: any) {
-		this.socketManager?.sendAnswer({ accessCode, sdp });
+	public sendAnswer(roomId: string, sdp: any) {
+		this.socketManager?.sendAnswer({ roomId, sdp });
 	}
 
-	public sendIce(accessCode: string, ice: any) {
-		this.socketManager?.sendIce({ accessCode, ice });
+	public sendIce(roomId: string, ice: any) {
+		this.socketManager?.sendIce({ roomId, ice });
 	}
 
 	public close() {

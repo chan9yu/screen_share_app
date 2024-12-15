@@ -1,6 +1,10 @@
 import { roomStore } from '../data/RoomStore';
 
 export class RoomService {
+	public validateRoom(roomId: string) {
+		return roomStore.hasRoom(roomId);
+	}
+
 	public createRoom() {
 		let roomId: string;
 		do {

@@ -51,7 +51,7 @@ export const CaedContents = styled.div`
 	align-items: center;
 `;
 
-export const AccessCode = styled.div`
+export const RoomId = styled.div`
 	width: 100%;
 	height: 40px;
 	display: flex;

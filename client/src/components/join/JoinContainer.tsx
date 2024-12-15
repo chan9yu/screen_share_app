@@ -11,22 +11,23 @@ export default function JoinContainer() {
 	const { colors } = useTheme();
 	const { mainService } = useMainService();
 
-	const [accessCode, setAccessCode] = useState('');
+	const [createdRoomId, setCreatedRoomId] = useState('');
+	const [joinRoomId, setJoinRoomId] = useState('');
 
-	const handleCreateAccessCode = async () => {
-		if (accessCode) {
-			mainService.sendLeave(accessCode);
+	const handleCreateRoomId = async () => {
+		if (createdRoomId) {
+			mainService.sendLeave(createdRoomId);
 
 			try {
-				await roomApi.closeRoom(accessCode);
-				setAccessCode('');
+				await roomApi.closeRoom(createdRoomId);
+				setCreatedRoomId('');
 			} catch (error) {
 				console.error(error);
 			}
 		} else {
 			try {
 				const { roomId } = await roomApi.createRoom();
-				setAccessCode(roomId);
+				setCreatedRoomId(roomId);
 				mainService.sendJoin(roomId);
 			} catch (error) {
 				console.error(error);
@@ -35,30 +36,36 @@ export default function JoinContainer() {
 	};
 
 	const handleCopyToRoomId = async () => {
-		if (!accessCode) return;
+		if (!createdRoomId) return;
 
 		try {
-			await navigator.clipboard.writeText(accessCode);
+			await navigator.clipboard.writeText(createdRoomId);
 			toast.success('클립보드에 복사하였습니다.');
 		} catch (error) {
 			console.error('Failed to copy text:', error);
 		}
 	};
 
-	// 다른 컴퓨터에 연결
-
-	const [joinAccessCode, setJoinAccessCode] = useState<string>('');
-
-	const handleChangeJoinAccessCode = (e: ChangeEvent<HTMLInputElement>) => {
-		// setJoinAccessCode(e.target.value);
+	const handleChangeJoinRoomId = (e: ChangeEvent<HTMLInputElement>) => {
+		const value = e.target.value;
+		if (value.length <= 6) {
+			setJoinRoomId(e.target.value);
+		}
 	};
 
-	const handleConnectRoom = () => {
-		// if (!joinAccessCode) {
-		// 	alert('엑세스 코드가 필요합니다.');
-		// 	return;
-		// }
-		// sendJoinRoom(joinAccessCode);
+	const handleConnectRoom = async () => {
+		if (!joinRoomId) {
+			alert('RoomId가 필요합니다.');
+			return;
+		}
+
+		const { success } = await roomApi.validateRoom(joinRoomId);
+
+		if (success) {
+			mainService.sendJoin(joinRoomId);
+		} else {
+			toast.error('방이 존재하지 않습니다.');
+		}
 	};
 
 	return (
@@ -70,19 +77,19 @@ export default function JoinContainer() {
 					</S.CardIcon>
 					<S.CardTitle>화면 공유</S.CardTitle>
 				</S.CardHeader>
-				<S.CardDescription>다른 사용자가 원격으로 내 컴퓨터를 제어할 수 있도록 코드를 생성합니다</S.CardDescription>
+				<S.CardDescription>다른 사용자가 원격으로 내 컴퓨터를 제어할 수 있도록 방을 생성합니다.</S.CardDescription>
 				<S.CaedContents>
-					{accessCode && (
-						<S.AccessCode>
-							{accessCode.slice(0, 3)}&nbsp;{accessCode.slice(3)}
+					{createdRoomId && (
+						<S.RoomId>
+							{createdRoomId.slice(0, 3)}&nbsp;{createdRoomId.slice(3)}
 							<S.IconBox onClick={handleCopyToRoomId}>
 								<Icon name="clipboard" width={18} stroke={colors.gray[800]} />
 							</S.IconBox>
-						</S.AccessCode>
+						</S.RoomId>
 					)}
 				</S.CaedContents>
-				<S.Button color="blue" onClick={handleCreateAccessCode}>
-					{accessCode ? '취소' : '코드 생성'}
+				<S.Button color="blue" onClick={handleCreateRoomId}>
+					{createdRoomId ? '취소' : '방 생성'}
 				</S.Button>
 			</S.Card>
 			<S.Card>
@@ -92,15 +99,15 @@ export default function JoinContainer() {
 					</S.CardIcon>
 					<S.CardTitle>다른 컴퓨터에 연결</S.CardTitle>
 				</S.CardHeader>
-				<S.CardDescription>원격 액세스 코드를 입력하여 다른 컴퓨터에 연결합니다</S.CardDescription>
+				<S.CardDescription>만들어진 방의 ID를 입력하여 다른 컴퓨터에 연결합니다.</S.CardDescription>
 				<S.CaedContents>
 					<S.Input
 						type="number"
 						maxLength={6}
 						minLength={6}
-						placeholder="엑세스 코드를 입력하세요"
-						value={joinAccessCode}
-						onChange={handleChangeJoinAccessCode}
+						placeholder="입장할 방의 ID를 입력하세요"
+						value={joinRoomId}
+						onChange={handleChangeJoinRoomId}
 					/>
 				</S.CaedContents>
 				<S.Button color="red" onClick={handleConnectRoom}>
