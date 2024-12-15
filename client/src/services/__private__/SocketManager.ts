@@ -40,6 +40,10 @@ export class SocketManager extends EventEmitter<EventTypes> {
 		this.sendMessage('join', data);
 	}
 
+	public sendLeave(data: { accessCode: string }) {
+		this.sendMessage('leave', data);
+	}
+
 	public sendOffer(data: { accessCode: string; sdp: any }) {
 		this.sendMessage('offer', data);
 	}

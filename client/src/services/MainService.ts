@@ -16,11 +16,16 @@ export class MainService {
 	private connectToWebSocket() {
 		const url = 'ws://localhost:3036';
 		this.socketManager = new SocketManager(url);
+		this.socketManager.connect();
 		this.initWebSocketEvents();
 	}
 
 	public sendJoin(accessCode: string) {
 		this.socketManager?.sendJoin({ accessCode });
+	}
+
+	public sendLeave(accessCode: string) {
+		this.socketManager?.sendLeave({ accessCode });
 	}
 
 	public sendOffer(accessCode: string, sdp: any) {

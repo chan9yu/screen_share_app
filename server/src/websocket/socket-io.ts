@@ -10,10 +10,18 @@ export const createSocketServer = (server: http.Server) => {
 	});
 
 	io.on('connection', socket => {
+		const userId = socket.id;
+
 		socket.on('join', data => {
 			const { accessCode } = data;
 			socket.join(accessCode);
-			socket.to(accessCode).emit('welcome');
+			socket.to(accessCode).emit('welcome', { userId, accessCode });
+		});
+
+		socket.on('leave', data => {
+			const { accessCode } = data;
+			socket.leave(accessCode);
+			socket.to(accessCode).emit('leave', { userId, accessCode });
 		});
 
 		socket.on('offer', data => {
