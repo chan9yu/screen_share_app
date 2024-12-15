@@ -1,41 +1,41 @@
-import { parseMessage } from '../utils';
+import { SocketManager } from './__private__';
 
 export class MainService {
-	private websocket: WebSocket | null = null;
+	private socketManager: SocketManager | null = null;
 
 	constructor() {
 		this.connectToWebSocket();
 	}
 
-	private onWebsocketOpen = () => {
-		console.log('onWebsocketOpen');
-	};
-
-	private onWebsocketMessage = (event: MessageEvent) => {
-		const message = parseMessage(event.data);
-		console.log('Received message:', message);
-	};
-
-	private onWebsocketClose = () => {
-		console.warn('WebSocket connection closed');
-	};
-
-	private onWebsocketError = () => {
-		console.error('WebSocket error occurred');
-	};
-
 	private initWebSocketEvents() {
-		if (!this.websocket) return;
+		if (!this.socketManager) return;
 
-		this.websocket.onopen = this.onWebsocketOpen.bind(this);
-		this.websocket.onmessage = this.onWebsocketMessage.bind(this);
-		this.websocket.onclose = this.onWebsocketClose.bind(this);
-		this.websocket.onerror = this.onWebsocketError.bind(this);
+		// ... event init
 	}
 
 	private connectToWebSocket() {
 		const url = 'ws://localhost:3036';
-		this.websocket = new WebSocket(url);
+		this.socketManager = new SocketManager(url);
 		this.initWebSocketEvents();
+	}
+
+	public sendJoin(accessCode: string) {
+		this.socketManager?.sendJoin({ accessCode });
+	}
+
+	public sendOffer(accessCode: string, sdp: any) {
+		this.socketManager?.sendOffer({ accessCode, sdp });
+	}
+
+	public sendAnswer(accessCode: string, sdp: any) {
+		this.socketManager?.sendAnswer({ accessCode, sdp });
+	}
+
+	public sendIce(accessCode: string, ice: any) {
+		this.socketManager?.sendIce({ accessCode, ice });
+	}
+
+	public close() {
+		this.socketManager?.disconnect();
 	}
 }
