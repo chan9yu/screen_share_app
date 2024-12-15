@@ -1,6 +1,6 @@
 import { EventEmitter } from 'eventemitter3';
 
-export class RTCManager extends EventEmitter {
+export class RTCManager extends EventEmitter<'ice' | 'remote_stream'> {
 	private peer: RTCPeerConnection | null = null;
 
 	constructor(
@@ -29,7 +29,7 @@ export class RTCManager extends EventEmitter {
 		};
 
 		this.peer.onicecandidate = event => {
-			console.log('on ice candidate', event);
+			event.candidate && this.emit('ice', event.candidate);
 		};
 
 		this.peer.oniceconnectionstatechange = event => {
@@ -41,8 +41,21 @@ export class RTCManager extends EventEmitter {
 		};
 
 		this.peer.ontrack = event => {
-			console.log('on track', event);
+			const [remoteStream] = event.streams;
+			this.emit('remote_stream', remoteStream);
 		};
+	}
+
+	public addMediaStream(stream: MediaStream) {
+		if (!this.peer) return;
+		stream.getTracks().forEach(track => {
+			this.peer?.addTrack(track, stream);
+		});
+	}
+
+	public addIceCandidate(candidate: RTCIceCandidateInit) {
+		if (!this.peer) return;
+		this.peer.addIceCandidate(candidate);
 	}
 
 	public async createOfferSDP(options?: RTCOfferOptions) {

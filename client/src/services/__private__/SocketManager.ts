@@ -40,6 +40,10 @@ export class SocketManager extends EventEmitter<EventTypes> {
 		this.sendMessage('join', data);
 	}
 
+	public sendWelcome(data: { roomId: string; userId: string }) {
+		this.sendMessage('welcome', data);
+	}
+
 	public sendLeave(data: { roomId: string }) {
 		this.sendMessage('leave', data);
 	}
@@ -52,7 +56,7 @@ export class SocketManager extends EventEmitter<EventTypes> {
 		this.sendMessage('answer', data);
 	}
 
-	public sendIce(data: { roomId: string; ice: RTCIceCandidate }) {
+	public sendIce(data: { roomId: string; candidate: RTCIceCandidate }) {
 		this.sendMessage('ice', data);
 	}
 
@@ -69,9 +73,10 @@ export class SocketManager extends EventEmitter<EventTypes> {
 			console.log('Disconnected from WebSocket server');
 		});
 
-		this.socket.on('welcome', () => {
-			this.emit('welcome');
-			console.log('Welcome message received from server');
+		this.socket.on('welcome', data => {
+			this.sendWelcome({ roomId: data.roomId, userId: data.userId });
+			this.emit('welcome', data);
+			console.log('Welcome message received from server', data);
 		});
 
 		this.socket.on('offer', data => {

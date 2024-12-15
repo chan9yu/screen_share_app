@@ -9,18 +9,19 @@ import * as S from './JoinContainer.styles';
 
 export default function JoinContainer() {
 	const { colors } = useTheme();
-	const { mainService, setJoined } = useMainService();
+	const { mainService, setIsHost } = useMainService();
 
 	const [createdRoomId, setCreatedRoomId] = useState('');
 	const [joinRoomId, setJoinRoomId] = useState('');
 
 	const handleCreateRoomId = async () => {
 		if (createdRoomId) {
-			mainService.sendLeave(createdRoomId);
+			mainService.sendLeave();
 
 			try {
 				await roomApi.closeRoom(createdRoomId);
 				setCreatedRoomId('');
+				setIsHost(false);
 			} catch (error) {
 				console.error(error);
 			}
@@ -28,6 +29,7 @@ export default function JoinContainer() {
 			try {
 				const { roomId } = await roomApi.createRoom();
 				setCreatedRoomId(roomId);
+				setIsHost(true);
 				mainService.sendJoin(roomId);
 			} catch (error) {
 				console.error(error);
@@ -55,7 +57,7 @@ export default function JoinContainer() {
 
 	const handleConnectRoom = async () => {
 		if (!joinRoomId) {
-			alert('RoomId가 필요합니다.');
+			toast.error('RoomId가 필요합니다.');
 			return;
 		}
 
@@ -63,7 +65,6 @@ export default function JoinContainer() {
 
 		if (success) {
 			mainService.sendJoin(joinRoomId);
-			setJoined(true);
 		} else {
 			toast.error('방이 존재하지 않습니다.');
 		}

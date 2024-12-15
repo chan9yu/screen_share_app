@@ -1,50 +1,98 @@
-import EventEmitter from 'eventemitter3';
-import { SocketManager } from './__private__';
+import { EventEmitter } from 'eventemitter3';
 
-export class MainService extends EventEmitter<'state'> {
+import { SocketManager } from './__private__';
+import { RTCManager } from '../modules';
+import { iceServers } from './servers';
+
+export class MainService extends EventEmitter<'state' | 'media'> {
 	private socketManager: SocketManager | null = null;
+	private rtcManager: RTCManager | null = null;
+	private _roomId = '';
+
+	get roomId() {
+		return this._roomId;
+	}
 
 	constructor() {
 		super();
-		this.connectToWebSocket();
+		this.rtcManager = new RTCManager('mainService', { iceServers });
+		this.initRTCManagerEvents();
+	}
+
+	private initRTCManagerEvents() {
+		if (!this.rtcManager) return;
+
+		this.rtcManager.on('ice', (candidate: RTCIceCandidate) => {
+			this.sendIce(candidate);
+		});
+
+		this.rtcManager.on('remote_stream', (remoteStream: MediaStream) => {
+			this.emit('media', { remoteStream });
+		});
 	}
 
 	private initWebSocketEvents() {
 		if (!this.socketManager) return;
 
-		this.socketManager.on('welcome', () => {
+		this.socketManager.on('welcome', data => {
+			this._roomId = data.roomId;
 			this.emit('state', { joined: true });
+		});
+
+		this.socketManager.on('leave', () => {
+			this.emit('state', { joined: false });
+			this.close();
+		});
+
+		this.socketManager.on('disconnect', () => {
+			this.emit('state', { joined: false });
+			this.close();
+		});
+
+		this.socketManager.on('offer', async (data: RTCSessionDescriptionInit) => {
+			const sdp = await this.rtcManager?.setRemoteSDP(data);
+			sdp && this.sendAnswer(sdp);
+		});
+
+		this.socketManager.on('answer', async (data: RTCSessionDescriptionInit) => {
+			await this.rtcManager?.setRemoteSDP(data);
+		});
+
+		this.socketManager.on('ice', (data: RTCIceCandidateInit) => {
+			this.rtcManager?.addIceCandidate(data);
 		});
 	}
 
-	private connectToWebSocket() {
+	public connectToSocket() {
 		const url = 'ws://localhost:3036';
 		this.socketManager = new SocketManager(url);
 		this.socketManager.connect();
 		this.initWebSocketEvents();
 	}
 
+	public close() {
+		this.socketManager?.disconnect();
+	}
+
 	public sendJoin(roomId: string) {
 		this.socketManager?.sendJoin({ roomId });
 	}
 
-	public sendLeave(roomId: string) {
-		this.socketManager?.sendLeave({ roomId });
+	public sendLeave() {
+		this.socketManager?.sendLeave({ roomId: this._roomId });
 	}
 
-	public sendOffer(roomId: string, sdp: any) {
-		this.socketManager?.sendOffer({ roomId, sdp });
+	public async sendOffer(stream: MediaStream) {
+		this.rtcManager?.addMediaStream(stream);
+		const sdp = await this.rtcManager?.createOfferSDP();
+		this.socketManager?.sendOffer({ roomId: this._roomId, sdp });
 	}
 
-	public sendAnswer(roomId: string, sdp: any) {
-		this.socketManager?.sendAnswer({ roomId, sdp });
+	public sendAnswer(sdp: RTCSessionDescriptionInit) {
+		this.socketManager?.sendAnswer({ roomId: this._roomId, sdp });
 	}
 
-	public sendIce(roomId: string, ice: any) {
-		this.socketManager?.sendIce({ roomId, ice });
-	}
-
-	public close() {
-		this.socketManager?.disconnect();
+	public sendIce(candidate: RTCIceCandidate) {
+		this.socketManager?.sendIce({ roomId: this._roomId, candidate });
 	}
 }

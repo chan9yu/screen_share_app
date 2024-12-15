@@ -18,6 +18,13 @@ export const createSocketServer = (server: http.Server) => {
 			socket.to(roomId).emit('welcome', { userId, roomId });
 		});
 
+		socket.once('welcome', data => {
+			const { roomId, userId: targetId } = data;
+			if (userId !== targetId) {
+				io.to(targetId).emit('welcome', { userId, roomId });
+			}
+		});
+
 		socket.on('leave', data => {
 			const { roomId } = data;
 			socket.leave(roomId);
@@ -35,12 +42,10 @@ export const createSocketServer = (server: http.Server) => {
 		});
 
 		socket.on('ice', data => {
-			const { roomId, ice } = data;
-			socket.to(roomId).emit('ice', ice);
+			const { roomId, candidate } = data;
+			socket.to(roomId).emit('ice', candidate);
 		});
 
-		socket.on('disconnect', () => {
-			console.log(`User ${userId} disconnected`);
-		});
+		socket.on('disconnect', () => {});
 	});
 };
