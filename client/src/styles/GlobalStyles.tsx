@@ -1,10 +1,22 @@
-import { css, Global } from '@emotion/react';
+import { css, Global, Theme, useTheme } from '@emotion/react';
 import emotionReset from 'emotion-reset';
 
-const styles = css`
+import PretendardVariable from '../assets/font/PretendardVariable.woff2';
+
+const createGlobalStyles = (theme: Theme) => css`
 	${emotionReset}
 
-	*, *::after, *::before {
+	@font-face {
+		font-family: 'Pretendard Variable';
+		font-weight: 400 500 700;
+		font-style: normal;
+		font-display: swap;
+		src: url(${PretendardVariable}) format('woff2-variations');
+	}
+
+	*,
+	*::after,
+	*::before {
 		box-sizing: border-box;
 		-moz-osx-font-smoothing: grayscale;
 		-webkit-font-smoothing: antialiased;
@@ -14,9 +26,9 @@ const styles = css`
 	#root {
 		width: 100dvw;
 		height: 100dvh;
-		background-color: #f3f4f5;
-		color: #1f2937;
-		font-family: 'Arial', sans-serif;
+		background-color: ${theme.colors.blueGray[100]};
+		color: ${theme.colors.gray[800]};
+		font: ${theme.typography.R200};
 	}
 
 	a {
@@ -32,5 +44,8 @@ const styles = css`
 `;
 
 export default function GlobalStyles() {
-	return <Global styles={styles} />;
+	const theme = useTheme();
+	const globalStyles = createGlobalStyles(theme);
+
+	return <Global styles={globalStyles} />;
 }
