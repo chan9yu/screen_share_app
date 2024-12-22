@@ -17,5 +17,8 @@ export default defineConfig({
 	server: {
 		host: '0.0.0.0',
 		port: 3035
+	},
+	define: {
+		APP_VERSION: JSON.stringify(process.env.npm_package_version)
 	}
 });
