@@ -35,6 +35,7 @@ export const useMainService = () => {
 
 export function MainServiceProvider({ children }: PropsWithChildren) {
 	const [isHost, setIsHost] = useState(false);
+	const [isConnected, setIsConnected] = useState(false);
 	const [joined, setJoined] = useState(false);
 	const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
 
@@ -58,14 +59,14 @@ export function MainServiceProvider({ children }: PropsWithChildren) {
 
 	useEffect(() => {
 		if (joined) {
-			// 연결 성공
+			setIsConnected(true);
 		} else {
-			toast.error('상대방과 연결이 종료되어 대기 페이지로 이동합니다.');
+			isConnected && toast.error('상대방과 연결이 종료되어 대기 페이지로 이동합니다.');
 			mainService.resetRTCManager();
 			setRemoteStream(null);
 			mainService.reconnectSocket();
 		}
-	}, [joined]);
+	}, [joined, isConnected]);
 
 	const value = useMemo(
 		() => ({
