@@ -9,8 +9,9 @@ import {
 	useRef,
 	useState
 } from 'react';
-import { MainService } from '../services/MainService';
 import { toast } from 'react-toastify';
+
+import { MainService } from '../services/MainService';
 
 type MainServiceContextProps = {
 	mainService: MainService;
