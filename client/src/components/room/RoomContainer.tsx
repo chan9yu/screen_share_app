@@ -7,7 +7,7 @@ import * as S from './RoomContainer.styles';
 
 export default function RoomContainer() {
 	const { mainService, isHost, remoteStream, setJoined } = useMainService();
-	const { changeScreenShare, sharing, startScreenShare, stopScreenShare, stream, videoRef } = useScreenShare();
+	const { changeScreenShare, sharing, startScreenShare, stream, videoRef } = useScreenShare();
 
 	const remoteVideoRef = useRef<HTMLVideoElement>(null);
 	// local 환경에서 한 번만 실행할 수 있도록 임시 설정
@@ -54,15 +54,15 @@ export default function RoomContainer() {
 						<S.Menu color="blue" disabled={!sharing} onClick={changeScreenShare}>
 							Change Screen
 						</S.Menu>
-						<S.Menu color="red" disabled={!sharing} onClick={stopScreenShare}>
-							Stop Screen
-						</S.Menu>
 					</S.Toolbar>
 				</>
 			) : (
 				<>
-					{!remoteStream && <S.Loading>준비 중입니다. 잠시만 기다려주세요.</S.Loading>}
-					<S.Video id="remote-video" ref={remoteVideoRef} autoPlay playsInline />
+					{remoteStream ? (
+						<S.Video id="remote-video" ref={remoteVideoRef} autoPlay playsInline />
+					) : (
+						<S.Loading>준비 중입니다. 잠시만 기다려주세요.</S.Loading>
+					)}
 				</>
 			)}
 			<S.CloseButton onClick={handleClose}>X</S.CloseButton>
