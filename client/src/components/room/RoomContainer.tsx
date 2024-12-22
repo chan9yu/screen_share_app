@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
 
 import { useMainService } from '../../contexts';
+import { usePreventRefresh } from '../../hooks';
 import { GuestScreen, HostScreen } from './__private__';
 import * as S from './RoomContainer.styles';
 
@@ -11,12 +12,19 @@ export default function RoomContainer() {
 	// local 환경에서 한 번만 실행할 수 있도록 임시 설정
 	const hasExecuted = useRef(false);
 
-	const handleClose = () => {
-		if (confirm('나가시겠습니까?')) {
-			mainService.sendLeave();
-			setJoined(false);
-		}
+	const handleLeave = () => {
+		mainService.sendLeave();
+		setJoined(false);
 	};
+
+	const handleClose = () => {
+		confirm('나가시겠습니까?') && handleLeave;
+	};
+
+	usePreventRefresh({
+		callback: handleLeave,
+		shouldPreventDefault: false
+	});
 
 	useEffect(() => {
 		if (!hasExecuted.current) {
