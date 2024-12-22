@@ -46,10 +46,6 @@ export function MainServiceProvider({ children }: PropsWithChildren) {
 			mainService.connectToSocket();
 			mainService.on('state', data => {
 				setJoined(data?.joined);
-
-				if (!data?.joined) {
-					toast.error('연결이 종료되어 대기 페이지로 이동합니다.');
-				}
 			});
 
 			mainService.on('media', data => {
@@ -59,6 +55,15 @@ export function MainServiceProvider({ children }: PropsWithChildren) {
 			hasExecuted.current = true;
 		}
 	}, []);
+
+	useEffect(() => {
+		if (joined) {
+			// 연결 성공
+		} else {
+			toast.error('상대방과 연결이 종료되어 대기 페이지로 이동합니다.');
+			mainService.reconnectSocket();
+		}
+	}, [joined]);
 
 	const value = useMemo(
 		() => ({

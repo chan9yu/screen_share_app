@@ -68,8 +68,14 @@ export class MainService extends EventEmitter<'state' | 'media'> {
 		this.initWebSocketEvents();
 	}
 
-	public close() {
+	public closeSocket() {
 		this.socketManager?.disconnect();
+		this.socketManager = null;
+	}
+
+	public reconnectSocket() {
+		this.closeSocket();
+		this.connectToSocket();
 	}
 
 	public sendJoin(roomId: string) {
