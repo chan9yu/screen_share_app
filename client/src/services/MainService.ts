@@ -18,7 +18,7 @@ export class MainService extends EventEmitter<'state' | 'media'> {
 
 	public initRTCManager() {
 		if (this.rtcManager) {
-			console.warn('exist rtc manager instance');
+			console.warn('RTC Manager instance already exists.');
 			return;
 		}
 
@@ -28,7 +28,7 @@ export class MainService extends EventEmitter<'state' | 'media'> {
 
 	public clearRTCManager() {
 		if (!this.rtcManager) {
-			console.warn('not found rtc manager instance');
+			console.warn('No RTC Manager instance found.');
 			return;
 		}
 

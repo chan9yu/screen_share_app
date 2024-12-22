@@ -20,24 +20,24 @@ export class RTCManager extends EventEmitter<'ice' | 'remote_stream'> {
 	private initPeerEvents() {
 		if (!this.peer) return;
 
-		this.peer.onconnectionstatechange = event => {
-			console.log('on connection state change', event);
+		this.peer.onconnectionstatechange = () => {
+			console.log('on connection state change');
 		};
 
-		this.peer.onsignalingstatechange = event => {
-			console.log('on signaling state change', event);
+		this.peer.onsignalingstatechange = () => {
+			console.log('on signaling state change');
 		};
 
 		this.peer.onicecandidate = event => {
 			event.candidate && this.emit('ice', event.candidate);
 		};
 
-		this.peer.oniceconnectionstatechange = event => {
-			console.log('on ice connection state change', event);
+		this.peer.oniceconnectionstatechange = () => {
+			console.log('on ice connection state change');
 		};
 
-		this.peer.onnegotiationneeded = event => {
-			console.log('on negotiation needed', event);
+		this.peer.onnegotiationneeded = () => {
+			console.log('on negotiation needed');
 		};
 
 		this.peer.ontrack = event => {

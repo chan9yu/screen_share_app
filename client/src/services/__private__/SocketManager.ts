@@ -33,7 +33,6 @@ export class SocketManager extends EventEmitter<EventTypes> {
 
 		this.socket.disconnect();
 		this.socket = null;
-		console.log('🔌 Socket connection closed.');
 	}
 
 	public sendJoin(data: { roomId: string }) {
