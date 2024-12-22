@@ -18,7 +18,7 @@ type MainServiceContextProps = {
 	setIsHost: Dispatch<SetStateAction<boolean>>;
 	joined: boolean;
 	setJoined: Dispatch<SetStateAction<boolean>>;
-	remoteStream?: MediaStream;
+	remoteStream: MediaStream | null;
 };
 
 const MainServiceContext = createContext<MainServiceContextProps | undefined>(undefined);
@@ -36,7 +36,7 @@ export const useMainService = () => {
 export function MainServiceProvider({ children }: PropsWithChildren) {
 	const [isHost, setIsHost] = useState(false);
 	const [joined, setJoined] = useState(false);
-	const [remoteStream, setRemoteStream] = useState<MediaStream>();
+	const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
 
 	// local 환경에서 한 번만 실행할 수 있도록 임시 설정
 	const hasExecuted = useRef(false);
@@ -61,6 +61,8 @@ export function MainServiceProvider({ children }: PropsWithChildren) {
 			// 연결 성공
 		} else {
 			toast.error('상대방과 연결이 종료되어 대기 페이지로 이동합니다.');
+			mainService.resetRTCManager();
+			setRemoteStream(null);
 			mainService.reconnectSocket();
 		}
 	}, [joined]);

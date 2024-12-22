@@ -1,8 +1,7 @@
 import { EventEmitter } from 'eventemitter3';
 
-import { SocketManager } from './__private__';
 import { RTCManager } from '../modules';
-import { iceServers } from './servers';
+import { SocketManager, iceServers } from './__private__';
 
 export class MainService extends EventEmitter<'state' | 'media'> {
 	private socketManager: SocketManager | null = null;
@@ -15,8 +14,31 @@ export class MainService extends EventEmitter<'state' | 'media'> {
 
 	constructor() {
 		super();
+	}
+
+	public initRTCManager() {
+		if (this.rtcManager) {
+			console.warn('exist rtc manager instance');
+			return;
+		}
+
 		this.rtcManager = new RTCManager('mainService', { iceServers });
 		this.initRTCManagerEvents();
+	}
+
+	public clearRTCManager() {
+		if (!this.rtcManager) {
+			console.warn('not found rtc manager instance');
+			return;
+		}
+
+		this.rtcManager.clear();
+		this.rtcManager = null;
+	}
+
+	public resetRTCManager() {
+		this.clearRTCManager();
+		this.initRTCManager();
 	}
 
 	private initRTCManagerEvents() {
