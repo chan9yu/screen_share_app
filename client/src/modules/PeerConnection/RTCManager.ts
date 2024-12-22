@@ -46,10 +46,22 @@ export class RTCManager extends EventEmitter<'ice' | 'remote_stream'> {
 		};
 	}
 
-	public addMediaStream(stream: MediaStream) {
+	public addTrack(stream: MediaStream) {
 		if (!this.peer) return;
+
 		stream.getTracks().forEach(track => {
 			this.peer?.addTrack(track, stream);
+		});
+	}
+
+	public removeTrack() {
+		if (!this.peer) return;
+
+		this.peer.getSenders().forEach(sender => {
+			if (sender.track) {
+				sender.track.stop();
+			}
+			this.peer?.removeTrack(sender);
 		});
 	}
 
@@ -92,6 +104,7 @@ export class RTCManager extends EventEmitter<'ice' | 'remote_stream'> {
 
 	public clear() {
 		if (this.peer) {
+			this.removeTrack();
 			this.peer.close();
 			this.peer = null;
 		}

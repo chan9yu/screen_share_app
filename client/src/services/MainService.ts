@@ -87,7 +87,7 @@ export class MainService extends EventEmitter<'state' | 'media'> {
 	}
 
 	public async sendOffer(stream: MediaStream) {
-		this.rtcManager?.addMediaStream(stream);
+		this.rtcManager?.addTrack(stream);
 		const sdp = await this.rtcManager?.createOfferSDP();
 		this.socketManager?.sendOffer({ roomId: this._roomId, sdp });
 	}
