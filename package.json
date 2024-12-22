@@ -1,7 +1,6 @@
 {
 	"name": "@screen_share_app/root",
 	"private": true,
-	"version": "1.0.0",
 	"description": "Real-time screen share service.",
 	"packageManager": "yarn@1.22.22",
 	"author": "chan9yu <dev.cgyeo@gmail.com>",
