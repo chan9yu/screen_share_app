@@ -18,7 +18,7 @@ export default function RoomContainer() {
 	};
 
 	const handleClose = () => {
-		confirm('나가시겠습니까?') && handleLeave;
+		confirm('나가시겠습니까?') && handleLeave();
 	};
 
 	usePreventRefresh({
