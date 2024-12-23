@@ -5,7 +5,7 @@ export class RTCManager extends EventEmitter<'ice' | 'remote_stream'> {
 
 	constructor(options?: RTCConfiguration) {
 		super();
-		this.peer = new RTCPeerConnection();
+		this.peer = new RTCPeerConnection(options);
 		this.initilize();
 	}
 
