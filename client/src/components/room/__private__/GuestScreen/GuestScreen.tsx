@@ -17,11 +17,8 @@ export default function GuestScreen() {
 
 	return (
 		<S.Container id="guest-screen">
-			{remoteStream ? (
-				<S.Video id="remote-video" ref={remoteVideoRef} autoPlay playsInline />
-			) : (
-				<S.LoadingText>준비 중입니다. 잠시만 기다려주세요.</S.LoadingText>
-			)}
+			{!remoteStream && <S.LoadingText>준비 중입니다. 잠시만 기다려주세요.</S.LoadingText>}
+			<S.Video ref={remoteVideoRef} autoPlay playsInline />
 		</S.Container>
 	);
 }

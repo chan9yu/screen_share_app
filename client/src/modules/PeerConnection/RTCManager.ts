@@ -3,17 +3,13 @@ import { EventEmitter } from 'eventemitter3';
 export class RTCManager extends EventEmitter<'ice' | 'remote_stream'> {
 	private peer: RTCPeerConnection | null = null;
 
-	constructor(
-		public readonly id: string,
-		options?: RTCConfiguration
-	) {
+	constructor(options?: RTCConfiguration) {
 		super();
-		this.peer = new RTCPeerConnection(options);
+		this.peer = new RTCPeerConnection();
 		this.initilize();
 	}
 
 	private initilize() {
-		console.log(`RTCManager initialized, id: ${this.id}`);
 		this.initPeerEvents();
 	}
 
@@ -21,27 +17,34 @@ export class RTCManager extends EventEmitter<'ice' | 'remote_stream'> {
 		if (!this.peer) return;
 
 		this.peer.onconnectionstatechange = () => {
-			console.log('on connection state change');
+			console.log('[RTCManager] Connection State Changed: ', this.peer?.connectionState);
 		};
 
 		this.peer.onsignalingstatechange = () => {
-			console.log('on signaling state change');
+			console.log('[RTCManager] Signaling State Changed: ', this.peer?.signalingState);
 		};
 
 		this.peer.onicecandidate = event => {
-			event.candidate && this.emit('ice', event.candidate);
+			const candidate = event.candidate;
+			if (candidate) {
+				console.log('[RTCManager] New ICE Candidate');
+				this.emit('ice', candidate);
+			} else {
+				console.log('[RTCManager] All ICE candidates have been sent.');
+			}
 		};
 
 		this.peer.oniceconnectionstatechange = () => {
-			console.log('on ice connection state change');
+			console.log('[RTCManager] ICE Connection State: ', this.peer?.iceConnectionState);
 		};
 
 		this.peer.onnegotiationneeded = () => {
-			console.log('on negotiation needed');
+			console.log('[RTCManager] Negotiation Needed...');
 		};
 
 		this.peer.ontrack = event => {
 			const [remoteStream] = event.streams;
+			console.log('[RTCManager] Remote Track Added: ', remoteStream);
 			this.emit('remote_stream', remoteStream);
 		};
 	}
@@ -67,6 +70,7 @@ export class RTCManager extends EventEmitter<'ice' | 'remote_stream'> {
 
 	public addIceCandidate(candidate: RTCIceCandidateInit) {
 		if (!this.peer) return;
+		console.log('[RTCManager] Adding ICE Candidate');
 		this.peer.addIceCandidate(candidate);
 	}
 

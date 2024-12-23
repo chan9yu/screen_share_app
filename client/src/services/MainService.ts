@@ -22,7 +22,7 @@ export class MainService extends EventEmitter<'state' | 'media'> {
 			return;
 		}
 
-		this.rtcManager = new RTCManager('mainService', { iceServers });
+		this.rtcManager = new RTCManager({ iceServers });
 		this.initRTCManagerEvents();
 	}
 
