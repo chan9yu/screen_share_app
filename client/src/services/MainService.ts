@@ -1,7 +1,7 @@
 import { EventEmitter } from 'eventemitter3';
 
 import { RTCManager } from '../modules';
-import { SocketManager, iceServers } from './__private__';
+import { SocketManager, freestunServers, googleStunServers } from './__private__';
 
 export class MainService extends EventEmitter<'state' | 'media'> {
 	private socketManager: SocketManager | null = null;
@@ -22,7 +22,7 @@ export class MainService extends EventEmitter<'state' | 'media'> {
 			return;
 		}
 
-		this.rtcManager = new RTCManager({ iceServers });
+		this.rtcManager = new RTCManager({ iceServers: [...freestunServers, ...googleStunServers] });
 		this.initRTCManagerEvents();
 	}
 
