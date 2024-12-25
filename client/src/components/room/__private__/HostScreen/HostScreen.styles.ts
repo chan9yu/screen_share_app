@@ -26,12 +26,13 @@ export const Menu = styled.button<{ color: 'red' | 'green' | 'blue' }>`
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	gap: 8px;
 	border-radius: 4px;
 	border: 0;
 	transition: 150ms;
 	background-color: ${({ color, theme }) => theme.colors[color][500]};
 	color: ${({ theme }) => theme.colors.white};
-	font: ${({ theme }) => theme.typography.B200};
+	font: ${({ theme }) => theme.typography.B100};
 	white-space: nowrap;
 
 	&:disabled {

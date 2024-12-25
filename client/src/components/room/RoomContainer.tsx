@@ -1,12 +1,15 @@
+import { useTheme } from '@emotion/react';
 import { useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
 
 import { useMainService } from '../../contexts';
 import { usePreventRefresh } from '../../hooks';
+import { Icon } from '../common';
 import { GuestScreen, HostScreen } from './__private__';
 import * as S from './RoomContainer.styles';
 
 export default function RoomContainer() {
+	const { colors } = useTheme();
 	const { mainService, isHost, setJoined } = useMainService();
 
 	// local 환경에서 한 번만 실행할 수 있도록 임시 설정
@@ -29,8 +32,7 @@ export default function RoomContainer() {
 
 	useEffect(() => {
 		if (!hasExecuted.current) {
-			const message = isHost ? '공유를 시작해주세요.' : '공유 준비 중입니다.';
-			toast.info(message);
+			toast.info('방에 입장하였습니다.');
 			hasExecuted.current = true;
 		}
 	}, []);
@@ -38,7 +40,9 @@ export default function RoomContainer() {
 	return (
 		<S.Container>
 			{isHost ? <HostScreen onClose={handleClose} /> : <GuestScreen onClose={handleClose} />}
-			<S.CloseButton onClick={handleClose}>X</S.CloseButton>
+			<S.CloseButton onClick={handleClose}>
+				<Icon name="close" color={colors.white} width={16} height={16} />
+			</S.CloseButton>
 		</S.Container>
 	);
 }

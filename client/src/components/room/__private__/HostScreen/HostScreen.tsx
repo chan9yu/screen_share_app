@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 
 import { useMainService } from '../../../../contexts';
 import { useScreenShare } from '../../../../hooks';
+import { Icon } from '../../../common';
 import LoaderOverlay from '../LoaderOverlay';
 import * as S from './HostScreen.styles';
 
@@ -31,6 +32,7 @@ export default function HostScreen({ onClose }: HostScreenProps) {
 			<S.Video ref={videoRef} autoPlay playsInline />
 			<S.Toolbar>
 				<S.Menu color="blue" disabled={!sharing} onClick={changeScreenShare}>
+					<Icon name="monitor_up" width={16} height={16} />
 					Change Screen
 				</S.Menu>
 			</S.Toolbar>
