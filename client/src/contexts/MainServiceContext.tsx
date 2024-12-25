@@ -11,7 +11,7 @@ import {
 } from 'react';
 import { toast } from 'react-toastify';
 
-import { MainService } from '../services/MainService';
+import { MainService } from '../services';
 
 type MainServiceContextProps = {
 	mainService: MainService;
@@ -19,6 +19,7 @@ type MainServiceContextProps = {
 	setIsHost: Dispatch<SetStateAction<boolean>>;
 	joined: boolean;
 	setJoined: Dispatch<SetStateAction<boolean>>;
+	connectionState: RTCPeerConnectionState | null;
 	remoteStream: MediaStream | null;
 };
 
@@ -38,6 +39,7 @@ export function MainServiceProvider({ children }: PropsWithChildren) {
 	const [isHost, setIsHost] = useState(false);
 	const [isConnected, setIsConnected] = useState(false);
 	const [joined, setJoined] = useState(false);
+	const [connectionState, setConnectionState] = useState<RTCPeerConnectionState | null>(null);
 	const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
 
 	// local 환경에서 한 번만 실행할 수 있도록 임시 설정
@@ -46,12 +48,14 @@ export function MainServiceProvider({ children }: PropsWithChildren) {
 	useEffect(() => {
 		if (!hasExecuted.current) {
 			mainService.connectToSocket();
+
 			mainService.on('state', data => {
 				setJoined(data?.joined);
+				setConnectionState(data?.connection ?? null);
 			});
 
 			mainService.on('media', data => {
-				setRemoteStream(data?.remoteStream);
+				setRemoteStream(data?.remoteStream ?? null);
 			});
 
 			hasExecuted.current = true;
@@ -76,9 +80,10 @@ export function MainServiceProvider({ children }: PropsWithChildren) {
 			setIsHost,
 			joined,
 			setJoined,
+			connectionState,
 			remoteStream
 		}),
-		[isHost, joined, remoteStream]
+		[isHost, joined, connectionState, remoteStream]
 	);
 
 	return <MainServiceContext.Provider value={value}>{children}</MainServiceContext.Provider>;

@@ -44,11 +44,15 @@ export class MainService extends EventEmitter<'state' | 'media'> {
 	private initRTCManagerEvents() {
 		if (!this.rtcManager) return;
 
+		this.rtcManager.on('state', (state: RTCPeerConnectionState) => {
+			this.emit('state', { joined: true, connection: state });
+		});
+
 		this.rtcManager.on('ice', (candidate: RTCIceCandidate) => {
 			this.sendIce(candidate);
 		});
 
-		this.rtcManager.on('remote_stream', (remoteStream: MediaStream) => {
+		this.rtcManager.on('track', (remoteStream: MediaStream) => {
 			this.emit('media', { remoteStream });
 		});
 	}

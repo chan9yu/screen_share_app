@@ -1,12 +1,17 @@
 import { useEffect, useRef } from 'react';
 
 import { useMainService } from '../../../../contexts';
+import LoaderOverlay from '../LoaderOverlay';
 import * as S from './GuestScreen.styles';
 
-export default function GuestScreen() {
+type GuestScreenProps = {
+	onClose: () => void;
+};
+
+export default function GuestScreen({ onClose }: GuestScreenProps) {
 	const remoteVideoRef = useRef<HTMLVideoElement>(null);
 
-	const { remoteStream } = useMainService();
+	const { connectionState, remoteStream } = useMainService();
 
 	useEffect(() => {
 		if (remoteVideoRef.current && remoteStream) {
@@ -17,7 +22,12 @@ export default function GuestScreen() {
 
 	return (
 		<S.Container id="guest-screen">
-			{!remoteStream && <S.LoadingText>준비 중입니다. 잠시만 기다려주세요.</S.LoadingText>}
+			{connectionState !== 'connected' && (
+				<LoaderOverlay
+					message="준비 중입니다. 잠시만 기다려주세요."
+					cancelAction={{ onClick: onClose, text: '나가기' }}
+				/>
+			)}
 			<S.Video ref={remoteVideoRef} autoPlay playsInline />
 		</S.Container>
 	);

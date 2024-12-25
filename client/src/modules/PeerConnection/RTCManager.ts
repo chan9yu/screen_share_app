@@ -1,6 +1,6 @@
 import { EventEmitter } from 'eventemitter3';
 
-export class RTCManager extends EventEmitter<'ice' | 'remote_stream'> {
+export class RTCManager extends EventEmitter<'state' | 'ice' | 'track'> {
 	private peer: RTCPeerConnection | null = null;
 
 	constructor(options?: RTCConfiguration) {
@@ -17,11 +17,12 @@ export class RTCManager extends EventEmitter<'ice' | 'remote_stream'> {
 		if (!this.peer) return;
 
 		this.peer.onconnectionstatechange = () => {
-			console.log('[RTCManager] Connection State Changed: ', this.peer?.connectionState);
+			console.log('[RTCManager] Connection State Changed:', this.peer?.connectionState);
+			this.emit('state', this.peer?.connectionState);
 		};
 
 		this.peer.onsignalingstatechange = () => {
-			console.log('[RTCManager] Signaling State Changed: ', this.peer?.signalingState);
+			console.log('[RTCManager] Signaling State Changed:', this.peer?.signalingState);
 		};
 
 		this.peer.onicecandidate = event => {
@@ -35,7 +36,7 @@ export class RTCManager extends EventEmitter<'ice' | 'remote_stream'> {
 		};
 
 		this.peer.oniceconnectionstatechange = () => {
-			console.log('[RTCManager] ICE Connection State: ', this.peer?.iceConnectionState);
+			console.log('[RTCManager] ICE Connection State:', this.peer?.iceConnectionState);
 		};
 
 		this.peer.onnegotiationneeded = () => {
@@ -44,8 +45,8 @@ export class RTCManager extends EventEmitter<'ice' | 'remote_stream'> {
 
 		this.peer.ontrack = event => {
 			const [remoteStream] = event.streams;
-			console.log('[RTCManager] Remote Track Added: ', remoteStream);
-			this.emit('remote_stream', remoteStream);
+			console.log('[RTCManager] Remote Track Added:', remoteStream);
+			this.emit('track', remoteStream);
 		};
 	}
 

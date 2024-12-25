@@ -21,6 +21,7 @@ export default function RoomContainer() {
 		confirm('나가시겠습니까?') && handleLeave();
 	};
 
+	// 새로고침 시 접속 중인 room leave
 	usePreventRefresh({
 		callback: handleLeave,
 		shouldPreventDefault: false
@@ -36,7 +37,7 @@ export default function RoomContainer() {
 
 	return (
 		<S.Container>
-			{isHost ? <HostScreen /> : <GuestScreen />}
+			{isHost ? <HostScreen onClose={handleClose} /> : <GuestScreen onClose={handleClose} />}
 			<S.CloseButton onClick={handleClose}>X</S.CloseButton>
 		</S.Container>
 	);
