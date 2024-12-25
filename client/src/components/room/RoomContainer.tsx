@@ -10,7 +10,7 @@ import * as S from './RoomContainer.styles';
 
 export default function RoomContainer() {
 	const { colors } = useTheme();
-	const { mainService, isHost, setJoined } = useMainService();
+	const { connectionState, isHost, mainService, setJoined } = useMainService();
 
 	// local 환경에서 한 번만 실행할 수 있도록 임시 설정
 	const hasExecuted = useRef(false);
@@ -36,6 +36,13 @@ export default function RoomContainer() {
 			hasExecuted.current = true;
 		}
 	}, []);
+
+	useEffect(() => {
+		if (connectionState === 'disconnected') {
+			toast.error('상대방과 연결이 끊어졌습니다.');
+			handleLeave();
+		}
+	}, [connectionState]);
 
 	return (
 		<S.Container>
