@@ -1,8 +1,3 @@
-export const freestunServers = [
-	{ urls: 'stun:freestun.net:3478' },
-	{ urls: 'turn:freestun.net:3478', username: 'free', credential: 'free' }
-];
-
 export const googleStunServers = [
 	{ urls: 'stun:stun.l.google.com:19302' },
 	{ urls: 'stun:stun.l.google.com:5349' },

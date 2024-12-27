@@ -1,7 +1,7 @@
 import { EventEmitter } from 'eventemitter3';
 
 import { RTCManager } from '../modules';
-import { SocketManager, freestunServers, googleStunServers } from './__private__';
+import { SocketManager, googleStunServers } from './__private__';
 
 export class MainService extends EventEmitter<'state' | 'media'> {
 	private socketManager: SocketManager | null = null;
@@ -16,13 +16,18 @@ export class MainService extends EventEmitter<'state' | 'media'> {
 		super();
 	}
 
-	public initRTCManager() {
+	public initRTCManager(options?: RTCConfiguration) {
 		if (this.rtcManager) {
 			console.warn('RTC Manager instance already exists.');
 			return;
 		}
 
-		this.rtcManager = new RTCManager({ iceServers: [...freestunServers, ...googleStunServers] });
+		console.log('init RTCManager option:', options);
+
+		this.rtcManager = new RTCManager({
+			...options,
+			iceServers: [...googleStunServers, ...(options?.iceServers ?? [])]
+		});
 		this.initRTCManagerEvents();
 	}
 
@@ -36,9 +41,9 @@ export class MainService extends EventEmitter<'state' | 'media'> {
 		this.rtcManager = null;
 	}
 
-	public resetRTCManager() {
+	public resetRTCManager(options?: RTCConfiguration) {
 		this.clearRTCManager();
-		this.initRTCManager();
+		this.initRTCManager(options);
 	}
 
 	private initRTCManagerEvents() {

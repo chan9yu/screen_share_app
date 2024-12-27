@@ -3,6 +3,7 @@ import {
 	PropsWithChildren,
 	SetStateAction,
 	createContext,
+	useCallback,
 	useContext,
 	useEffect,
 	useMemo,
@@ -11,6 +12,7 @@ import {
 } from 'react';
 import { toast } from 'react-toastify';
 
+import { webrtcApi } from '../apis';
 import { MainService } from '../services';
 
 type MainServiceContextProps = {
@@ -62,15 +64,27 @@ export function MainServiceProvider({ children }: PropsWithChildren) {
 		}
 	}, []);
 
-	useEffect(() => {
+	const handleConnectionUpdate = useCallback(async () => {
 		if (joined) {
 			setIsConnected(true);
-		} else {
-			isConnected && toast.error('상대방과 연결이 종료되어 대기 페이지로 이동합니다.');
-			mainService.resetRTCManager();
-			setRemoteStream(null);
-			mainService.reconnectSocket();
+			return;
 		}
+
+		const { servers } = await webrtcApi.getWebRTCTurn();
+
+		if (isConnected) {
+			toast.error('상대방과 연결이 종료되어 대기 페이지로 이동합니다.');
+			setRemoteStream(null);
+			mainService.resetRTCManager({ iceServers: servers });
+			mainService.reconnectSocket();
+		} else {
+			mainService.initRTCManager({ iceServers: servers });
+			mainService.connectToSocket();
+		}
+	}, [joined, isConnected]);
+
+	useEffect(() => {
+		handleConnectionUpdate();
 	}, [joined, isConnected]);
 
 	const value = useMemo(

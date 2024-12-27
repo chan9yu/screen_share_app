@@ -5,11 +5,12 @@ export class RTCManager extends EventEmitter<'state' | 'ice' | 'track'> {
 
 	constructor(options?: RTCConfiguration) {
 		super();
-		this.peer = new RTCPeerConnection(options);
-		this.initilize();
+		this.initilize(options);
 	}
 
-	private initilize() {
+	private initilize(options?: RTCConfiguration) {
+		console.log('[RTCManager] initilize peer connection');
+		this.peer = new RTCPeerConnection(options);
 		this.initPeerEvents();
 	}
 
