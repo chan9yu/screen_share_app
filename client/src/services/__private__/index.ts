@@ -1,2 +1,2 @@
-export * from './SocketManager';
+export * from './SignalingSocketClient';
 export * from './servers';

@@ -3,7 +3,7 @@ import { io, Socket } from 'socket.io-client';
 
 type EventTypes = 'connect' | 'disconnect' | 'welcome' | 'leave' | 'offer' | 'answer' | 'ice';
 
-export class SocketManager extends EventEmitter<EventTypes> {
+export class SignalingSocketClient extends EventEmitter<EventTypes> {
 	private socket: Socket | null = null;
 
 	constructor(private readonly socketUrl: string) {
@@ -75,30 +75,30 @@ export class SocketManager extends EventEmitter<EventTypes> {
 		});
 
 		this.socket.on('welcome', data => {
-			console.log('[SocketManager] <<< Recv welcome', data);
+			console.log('[SignalingSocketClient] <<< Recv welcome', data);
 			this.sendWelcome({ roomId: data.roomId, userId: data.userId });
 			this.emit('welcome', data);
 		});
 
 		this.socket.on('offer', data => {
-			console.log('[SocketManager] <<< Recv offer', data);
+			console.log('[SignalingSocketClient] <<< Recv offer', data);
 			this.emit('offer', data);
 		});
 
 		this.socket.on('answer', data => {
-			console.log('[SocketManager] <<< Recv answer', data);
+			console.log('[SignalingSocketClient] <<< Recv answer', data);
 			this.emit('answer', data);
 		});
 
 		this.socket.on('ice', data => {
-			console.log('[SocketManager] <<< Recv ice', data);
+			console.log('[SignalingSocketClient] <<< Recv ice', data);
 			this.emit('ice', data);
 		});
 	}
 
 	private sendMessage(event: string, data: object) {
 		if (!this.socket) return;
-		console.log('[SocketManager] >>> Send', event, data);
+		console.log('[SignalingSocketClient] >>> Send', event, data);
 		this.socket.emit(event, data);
 	}
 }
