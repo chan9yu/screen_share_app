@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react';
-import { ThreeDots } from 'react-loader-spinner';
+import { RotatingLines } from 'react-loader-spinner';
 
 import * as S from './LoaderOverlay.styles';
 
@@ -19,7 +19,14 @@ export default function LoaderOverlay({ message, confirmAction, cancelAction }: 
 
 	return (
 		<S.Container>
-			<ThreeDots visible height={30} color={colors.white} radius="9" ariaLabel="loader-overlay" />
+			<RotatingLines
+				visible={true}
+				width="96"
+				strokeColor={colors.white}
+				strokeWidth="5"
+				animationDuration="0.75"
+				ariaLabel="loader-overlay"
+			/>
 			{message && <S.Message>{message}</S.Message>}
 			<S.Buttons>
 				{confirmAction && (
