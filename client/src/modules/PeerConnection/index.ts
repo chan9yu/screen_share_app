@@ -1,1 +1,1 @@
-export { RTCManager } from './RTCManager';
+export { RTCPeer } from './RTCPeer';

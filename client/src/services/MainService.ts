@@ -1,11 +1,11 @@
 import { EventEmitter } from 'eventemitter3';
 
-import { RTCManager } from '../modules';
+import { RTCPeer } from '../modules';
 import { SignalingSocketClient, googleStunServers } from './__private__';
 
 export class MainService extends EventEmitter<'state' | 'media'> {
 	private socketClient: SignalingSocketClient | null = null;
-	private rtcManager: RTCManager | null = null;
+	private rtcPeer: RTCPeer | null = null;
 	private _roomId = '';
 
 	get roomId() {
@@ -16,48 +16,48 @@ export class MainService extends EventEmitter<'state' | 'media'> {
 		super();
 	}
 
-	public initRTCManager(options?: RTCConfiguration) {
-		if (this.rtcManager) {
-			console.warn('RTC Manager instance already exists.');
+	public initRTCPeer(options?: RTCConfiguration) {
+		if (this.rtcPeer) {
+			console.warn('RTCPeer instance already exists.');
 			return;
 		}
 
-		console.log('init RTCManager option:', options);
+		console.log('init RTCPeer option:', options);
 
-		this.rtcManager = new RTCManager({
+		this.rtcPeer = new RTCPeer({
 			...options,
 			iceServers: [...googleStunServers, ...(options?.iceServers ?? [])]
 		});
-		this.initRTCManagerEvents();
+		this.initRTCPeerEvents();
 	}
 
-	public clearRTCManager() {
-		if (!this.rtcManager) {
+	public clearRTCPeer() {
+		if (!this.rtcPeer) {
 			console.warn('No RTC Manager instance found.');
 			return;
 		}
 
-		this.rtcManager.clear();
-		this.rtcManager = null;
+		this.rtcPeer.clear();
+		this.rtcPeer = null;
 	}
 
-	public resetRTCManager(options?: RTCConfiguration) {
-		this.clearRTCManager();
-		this.initRTCManager(options);
+	public resetRTCPeer(options?: RTCConfiguration) {
+		this.clearRTCPeer();
+		this.initRTCPeer(options);
 	}
 
-	private initRTCManagerEvents() {
-		if (!this.rtcManager) return;
+	private initRTCPeerEvents() {
+		if (!this.rtcPeer) return;
 
-		this.rtcManager.on('state', (state: RTCPeerConnectionState) => {
+		this.rtcPeer.on('state', (state: RTCPeerConnectionState) => {
 			this.emit('state', { joined: true, connection: state });
 		});
 
-		this.rtcManager.on('ice', (candidate: RTCIceCandidate) => {
+		this.rtcPeer.on('ice', (candidate: RTCIceCandidate) => {
 			this.sendIce(candidate);
 		});
 
-		this.rtcManager.on('track', (remoteStream: MediaStream) => {
+		this.rtcPeer.on('track', (remoteStream: MediaStream) => {
 			this.emit('media', { remoteStream });
 		});
 	}
@@ -79,16 +79,16 @@ export class MainService extends EventEmitter<'state' | 'media'> {
 		});
 
 		this.socketClient.on('offer', async (data: RTCSessionDescriptionInit) => {
-			const sdp = await this.rtcManager?.setRemoteSDP(data);
+			const sdp = await this.rtcPeer?.setRemoteSDP(data);
 			sdp && this.sendAnswer(sdp);
 		});
 
 		this.socketClient.on('answer', async (data: RTCSessionDescriptionInit) => {
-			await this.rtcManager?.setRemoteSDP(data);
+			await this.rtcPeer?.setRemoteSDP(data);
 		});
 
 		this.socketClient.on('ice', (data: RTCIceCandidateInit) => {
-			this.rtcManager?.addIceCandidate(data);
+			this.rtcPeer?.addIceCandidate(data);
 		});
 	}
 
@@ -118,8 +118,8 @@ export class MainService extends EventEmitter<'state' | 'media'> {
 	}
 
 	public async sendOffer(stream: MediaStream) {
-		this.rtcManager?.addTrack(stream);
-		const sdp = await this.rtcManager?.createOfferSDP();
+		this.rtcPeer?.addTrack(stream);
+		const sdp = await this.rtcPeer?.createOfferSDP();
 		this.socketClient?.sendOffer({ roomId: this._roomId, sdp });
 	}
 

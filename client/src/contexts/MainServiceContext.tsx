@@ -75,10 +75,10 @@ export function MainServiceProvider({ children }: PropsWithChildren) {
 		if (isConnected) {
 			toast.error('상대방과 연결이 종료되어 대기 페이지로 이동합니다.');
 			setRemoteStream(null);
-			mainService.resetRTCManager({ iceServers: servers });
+			mainService.resetRTCPeer({ iceServers: servers });
 			mainService.reconnectSocket();
 		} else {
-			mainService.initRTCManager({ iceServers: servers });
+			mainService.initRTCPeer({ iceServers: servers });
 			mainService.connectToSocket();
 		}
 	}, [joined, isConnected]);

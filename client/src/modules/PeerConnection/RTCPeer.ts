@@ -1,6 +1,6 @@
 import { EventEmitter } from 'eventemitter3';
 
-export class RTCManager extends EventEmitter<'state' | 'ice' | 'track'> {
+export class RTCPeer extends EventEmitter<'state' | 'ice' | 'track'> {
 	private peer: RTCPeerConnection | null = null;
 
 	constructor(options?: RTCConfiguration) {
@@ -9,7 +9,7 @@ export class RTCManager extends EventEmitter<'state' | 'ice' | 'track'> {
 	}
 
 	private initilize(options?: RTCConfiguration) {
-		console.log('[RTCManager] initilize peer connection');
+		console.log('[RTCPeer] initilize peer connection');
 		this.peer = new RTCPeerConnection(options);
 		this.initPeerEvents();
 	}
@@ -18,35 +18,35 @@ export class RTCManager extends EventEmitter<'state' | 'ice' | 'track'> {
 		if (!this.peer) return;
 
 		this.peer.onconnectionstatechange = () => {
-			console.log('[RTCManager] Connection State Changed:', this.peer?.connectionState);
+			console.log('[RTCPeer] Connection State Changed:', this.peer?.connectionState);
 			this.emit('state', this.peer?.connectionState);
 		};
 
 		this.peer.onsignalingstatechange = () => {
-			console.log('[RTCManager] Signaling State Changed:', this.peer?.signalingState);
+			console.log('[RTCPeer] Signaling State Changed:', this.peer?.signalingState);
 		};
 
 		this.peer.onicecandidate = event => {
 			const candidate = event.candidate;
 			if (candidate) {
-				console.log('[RTCManager] New ICE Candidate');
+				console.log('[RTCPeer] New ICE Candidate');
 				this.emit('ice', candidate);
 			} else {
-				console.log('[RTCManager] All ICE candidates have been sent.');
+				console.log('[RTCPeer] All ICE candidates have been sent.');
 			}
 		};
 
 		this.peer.oniceconnectionstatechange = () => {
-			console.log('[RTCManager] ICE Connection State:', this.peer?.iceConnectionState);
+			console.log('[RTCPeer] ICE Connection State:', this.peer?.iceConnectionState);
 		};
 
 		this.peer.onnegotiationneeded = () => {
-			console.log('[RTCManager] Negotiation Needed...');
+			console.log('[RTCPeer] Negotiation Needed...');
 		};
 
 		this.peer.ontrack = event => {
 			const [remoteStream] = event.streams;
-			console.log('[RTCManager] Remote Track Added:', remoteStream);
+			console.log('[RTCPeer] Remote Track Added:', remoteStream);
 			this.emit('track', remoteStream);
 		};
 	}
@@ -72,7 +72,7 @@ export class RTCManager extends EventEmitter<'state' | 'ice' | 'track'> {
 
 	public addIceCandidate(candidate: RTCIceCandidateInit) {
 		if (!this.peer) return;
-		console.log('[RTCManager] Adding ICE Candidate');
+		console.log('[RTCPeer] Adding ICE Candidate');
 		this.peer.addIceCandidate(candidate);
 	}
 
